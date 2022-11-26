@@ -133,7 +133,7 @@ encounter(Organism<species_t, sp1_eats_m, sp1_eats_p> organism1,
   // kolei, aż do znalezienia pierwszej, która rozstrzyga efekt spotkania. Wtedy
   // kończymy sprawdzanie, ignorując następne reguły.
 
-  decltype(encounter(organism1, organism2)) nothingHappens = {
+  decltype(encounter(organism1, organism2)) nothing_happens = {
       organism1, organism2, std::nullopt};
 
   // 1. Możliwe jest spotkanie jedynie organizmów, których typ gatunku
@@ -156,7 +156,7 @@ encounter(Organism<species_t, sp1_eats_m, sp1_eats_p> organism1,
 
   // 3. Spotkanie, w którym jedna ze stron jest martwa, nie powoduje skutków.
   if (organism1.is_dead() || organism2.is_dead()) {
-    return nothingHappens;
+    return nothing_happens;
   }
 
   // 4. Spotkanie dwóch zwierząt tego samego gatunku prowadzi do godów. Dla
@@ -175,7 +175,7 @@ encounter(Organism<species_t, sp1_eats_m, sp1_eats_p> organism1,
   // 5. Spotkanie organizmów, które nie potrafią się zjadać, nie przynosi
   // efektów.
   if (!organism1.can_eat(organism2) && !organism2.can_eat(organism1)) {
-    return nothingHappens;
+    return nothing_happens;
   }
 
   // 6. Spotkanie dwóch zwierząt, które potrafią się nawzajem zjadać, prowadzi
@@ -215,14 +215,14 @@ encounter(Organism<species_t, sp1_eats_m, sp1_eats_p> organism1,
   // (zaokrągloną w dół) witalności zjedzonego, a zjedzony ginie.
   if (organism1.can_eat(organism2)) {
     if (organism2.get_vitality() >= organism1.get_vitality()) {
-      return nothingHappens;
+      return nothing_happens;
     }
     return {organism1.add_vitality(organism2.get_vitality() / 2),
             organism2.kill(), std::nullopt};
   }
   if (organism2.can_eat(organism1)) {
     if (organism1.get_vitality() >= organism2.get_vitality()) {
-      return nothingHappens;
+      return nothing_happens;
     }
     return {organism1.kill(),
             organism2.add_vitality(organism1.get_vitality() / 2), std::nullopt};
