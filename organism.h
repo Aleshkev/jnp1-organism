@@ -60,10 +60,12 @@ class Organism {
 
   template <bool x, bool y>
   constexpr bool can_eat(const Organism<species_t, x, y> &that) const {
-    if (can_eat_meat && !that.is_plant())
+    if (can_eat_meat && !that.is_plant()) {
       return true;
-    if (can_eat_plants && that.is_plant())
+    }
+    if (can_eat_plants && that.is_plant()) {
       return true;
+    }
     return false;
   }
   // TODO: usunąć te funkcje jeśli naprawdę się nigdy nie przydadzą
@@ -131,6 +133,9 @@ encounter(Organism<species_t, sp1_eats_m, sp1_eats_p> organism1,
   // kolei, aż do znalezienia pierwszej, która rozstrzyga efekt spotkania. Wtedy
   // kończymy sprawdzanie, ignorując następne reguły.
 
+  decltype(encounter(organism1, organism2)) nothingHappens = {
+      organism1, organism2, std::nullopt};
+
   // 1. Możliwe jest spotkanie jedynie organizmów, których typ gatunku
   // (species_t) jest taki sam (wartości oczywiście nie muszą być takie same).
   // Przykładowo przy poniższych deklaracjach gazela może spotkać lwa, ale nie
@@ -151,7 +156,7 @@ encounter(Organism<species_t, sp1_eats_m, sp1_eats_p> organism1,
 
   // 3. Spotkanie, w którym jedna ze stron jest martwa, nie powoduje skutków.
   if (organism1.is_dead() || organism2.is_dead()) {
-    return {organism1, organism2, std::nullopt};
+    return nothingHappens;
   }
 
   // 4. Spotkanie dwóch zwierząt tego samego gatunku prowadzi do godów. Dla
@@ -170,7 +175,7 @@ encounter(Organism<species_t, sp1_eats_m, sp1_eats_p> organism1,
   // 5. Spotkanie organizmów, które nie potrafią się zjadać, nie przynosi
   // efektów.
   if (!organism1.can_eat(organism2) && !organism2.can_eat(organism1)) {
-    return {organism1, organism2, std::nullopt};
+    return nothingHappens;
   }
 
   // 6. Spotkanie dwóch zwierząt, które potrafią się nawzajem zjadać, prowadzi
@@ -209,14 +214,16 @@ encounter(Organism<species_t, sp1_eats_m, sp1_eats_p> organism1,
   // W przeciwnym przypadku zjadający dodaje do swojej witalności połowę
   // (zaokrągloną w dół) witalności zjedzonego, a zjedzony ginie.
   if (organism1.can_eat(organism2)) {
-    if (organism2.get_vitality() >= organism1.get_vitality())
-      return {organism1, organism2, std::nullopt};
+    if (organism2.get_vitality() >= organism1.get_vitality()) {
+      return nothingHappens;
+    }
     return {organism1.add_vitality(organism2.get_vitality() / 2),
             organism2.kill(), std::nullopt};
   }
   if (organism2.can_eat(organism1)) {
-    if (organism1.get_vitality() >= organism2.get_vitality())
-      return {organism1, organism2, std::nullopt};
+    if (organism1.get_vitality() >= organism2.get_vitality()) {
+      return nothingHappens;
+    }
     return {organism1.kill(),
             organism2.add_vitality(organism1.get_vitality() / 2), std::nullopt};
   }
