@@ -9,6 +9,7 @@ const species_id_t wolf_id = 2;
 const species_id_t pine_id = 3;
 const species_id_t elephant_id = 4;
 
+
 int main() {
     // Przykład użycia funkcji encounter: wilk zjada psa.
     constexpr Omnivore<species_id_t> dog(dog_id, 10);
@@ -36,4 +37,13 @@ int main() {
 
     // Funkcja get_species() powinna zwracać gatunek.
     static_assert(wolf.get_species() == wolf_id);
+
+
+
+    Carnivore<std::string> lion("Panthera leo", 462);
+        Herbivore<std::string> gazelle("Gazella dorcas", 130);
+        Omnivore<uint64_t> doggy(1, 15);
+
+//    constexpr auto res = encounter_series(lion, gazelle, doggy)
+
 }
