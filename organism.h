@@ -10,12 +10,12 @@
 
 namespace {
 using vitality_t = uint64_t;
-using std::nullopt, std::optional, std::tuple, std::logic_error, std::get;
+using std::nullopt, std::optional, std::tuple, std::logic_error, std::get,
+    std::equality_comparable;
 }  // namespace
 
 template <typename species_t, bool can_eat_meat, bool can_eat_plants>
- requires std::equality_comparable<species_t>
-class Organism {
+requires equality_comparable<species_t> class Organism {
   const species_t species;
   const vitality_t vitality;
 
@@ -91,7 +91,7 @@ encounter(Organism<species_t, sp1_eats_m, sp1_eats_p> organism1,
   decltype(encounter(organism1, organism2)) nothing_happens = {
       organism1, organism2, nullopt};
 
-  // 2. Nie jest możliwe spotkanie dwóch roślin
+  // 2. Nie jest możliwe spotkanie dwóch roślin.
   static_assert(!organism1.is_plant() || !organism2.is_plant());
 
   // 3. Spotkanie, w którym jedna ze stron jest martwa.
@@ -113,8 +113,7 @@ encounter(Organism<species_t, sp1_eats_m, sp1_eats_p> organism1,
     return nothing_happens;
   }
 
-  // 6. Spotkanie dwóch zwierząt,
-  // które potrafią się nawzajem zjadać
+  // 6. Spotkanie dwóch zwierząt, które potrafią się nawzajem zjadać.
   if ((!organism1.is_plant() && !organism2.is_plant()) &&
       (organism1.can_eat(organism2) && organism2.can_eat(organism1))) {
     bool organism1_dies = organism2.get_vitality() >= organism1.get_vitality();
@@ -138,7 +137,8 @@ encounter(Organism<species_t, sp1_eats_m, sp1_eats_p> organism1,
             nullopt};
   }
 
-  // 8. Spotkanie, w którym zdolność do konsumpcji
+  // 8. Spotkanie, w którym zdolność do konsumpcji zachodzi tylko w jedną
+  // stronę.
   if (organism1.can_eat(organism2)) {
     if (organism2.get_vitality() >= organism1.get_vitality()) {
       return nothing_happens;
